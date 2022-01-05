@@ -1,0 +1,110 @@
+grafana_iam_policies:
+  amplist:
+    action:
+      - "aps:ListWorkspaces"
+  ampread:
+    action:
+      - "aps:DescribeWorkspace"
+      - "aps:QueryMetrics"
+      - "aps:GetLabels"
+      - "aps:GetSeries"
+      - "aps:GetMetricMetaata"
+    resource:
+      - Ref: APSWorkspace
+
+aot_ecs_observer:
+  docker_labels:
+    - port_label: ECS_PROMETHEUS_EXPORTER_PORT
+    - port_label: ECS_PROMETHEUS_EXPORTER_PORT_V2
+      metrics_path_label: ECS_PROMETHEUS_EXPORTER_METRICS_PATH
+
+
+aot_config_content:
+  extensions:
+    ecs_observer:
+      refresh_interval: 60s # format is https://golang.org/pkg/time/#ParseDuration
+      cluster_name: '${EnvironmentName}-services' # cluster name need manual config
+      cluster_region: '${AWS::Region}' # region can be configured directly or use AWS_REGION env var
+      result_file: '/etc/ecs_sd_targets.yaml' # the directory for file must already exists
+          
+  receivers:
+    prometheus:
+      config:
+        scrape_configs:
+          - job_name: "ecssd"
+            file_sd_configs:
+              - files:
+                  - '/etc/ecs_sd_targets.yaml'
+            relabel_configs:
+              - source_labels: [ __meta_ecs_cluster_name ] # ClusterName
+                action: replace
+                target_label: ClusterName
+              - source_labels: [ __meta_ecs_service_name ] # ServiceName
+                action: replace
+                target_label: ServiceName
+              - source_labels: [ __meta_ecs_task_definition_family ] # TaskDefinitionFamily
+                action: replace
+                target_label: TaskDefinitionFamily
+              - source_labels: [ __meta_ecs_container_name ] # container_name
+                action: replace
+                target_label: container_name
+              - action: labelmap # docker labels
+                regex: ^__meta_ecs_container_labels_(.+)$
+                replacement: '$$1'
+
+  processors:
+    batch: {}
+
+    exporters:
+      awsprometheusremotewrite:
+        endpoint: ${APSWorkspace.PrometheusEndpoint}api/v1/remote_write
+        aws_auth:
+          region: ${AWS::Region}
+          service: "aps"
+      logging:
+        loglevel: debug
+
+      
+  service:
+    extensions: [ ecs_observer ]
+    pipelines:
+      metrics:
+        receivers: [prometheus]
+        processors: [ batch ]
+        exporters: [logging, awsprometheusremotewrite]
+
+components:
+  exporter:
+    config:
+      platform_version: '1.4.0'
+      cpu:
+        Ref: Cpu
+      memory:
+        Ref: Memory
+      task_definition:
+        otelexport:
+          repo: ghcr.io
+          image: base2services/aws-ecs-otel-collector
+          tag: v0.15.1
+          env_vars:
+            ENVIRONMENT_NAME:
+              Fn::Sub: ${EnvironmentName}
+            AWS_REGION:
+              Fn::Sub: ${AWS::Region}
+          secrets:
+            ssm:
+              AOT_CONFIG_CONTENT: /${EnvironmentName}/amq-ecs/AOT_CONFIG_CONTENT
+      iam_policies:
+        ecsscan:
+          action:
+            - ecs:ListTasks
+            - ecs:ListServices
+            - ecs:DescribeContainerInstances
+            - ecs:DescribeServices
+            - ecs:DescribeTasks
+            - ecs:DescribeTaskDefinition
+        ampwrite:
+          action:
+            - aps:RemoteWrite
+          resource:
+            - Ref: APSWorkspace
