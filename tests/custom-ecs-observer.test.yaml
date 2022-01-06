@@ -40,14 +40,14 @@ aot_config_content:
   processors:
     batch: {}
 
-    exporters:
-      awsprometheusremotewrite:
-        endpoint: ${APSWorkspace.PrometheusEndpoint}api/v1/remote_write
-        aws_auth:
-          region: ${AWS::Region}
-          service: "aps"
-      logging:
-        loglevel: error
+  exporters:
+    awsprometheusremotewrite:
+      endpoint: ${APSWorkspace.PrometheusEndpoint}api/v1/remote_write
+      aws_auth:
+        region: ${AWS::Region}
+        service: "aps"
+    logging:
+      loglevel: error
 
       
   service:
