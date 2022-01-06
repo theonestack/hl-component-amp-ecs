@@ -1,0 +1,11 @@
+test_metadata:
+  type: config
+  name: custom-services
+  description: custom services config test
+
+
+aot_ecs_observer:
+  services:
+  - name_pattern: '^myservice-.*$'
+    metrics_ports:
+    - 8080

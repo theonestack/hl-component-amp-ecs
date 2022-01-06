@@ -1,0 +1,14 @@
+test_metadata:
+  type: config
+  name: custom-taskdef
+  description: custom task definition config test
+
+
+aot_ecs_observer:
+  task_definitions:
+  - arn_pattern: '^mytask-.*$'
+  - arn_pattern: '*othertask-.*'
+    metrics_path: /mymetrics
+    metrics_ports:
+    - 8080
+    - 9090

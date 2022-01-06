@@ -14,7 +14,7 @@ CloudFormation do
       Tags tags
     end
 
-    ecs_aot_config = external_parameters[:aot_config_content]
+    ecs_aot_config = external_parameters.fetch(:aot_config_content, external_parameters[:default_aot_config_content])
     aot_ecs_observer = external_parameters[:aot_ecs_observer]
     ecs_aot_config['extensions']['ecs_observer'].merge!(aot_ecs_observer)
 
