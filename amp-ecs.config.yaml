@@ -71,7 +71,7 @@ default_aot_config_content:
       metrics:
         receivers: [prometheus]
         processors: [ batch ]
-        exporters: [logging, awsprometheusremotewrite]
+        exporters: [awsprometheusremotewrite]
 
 components:
   exporter:
