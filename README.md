@@ -57,7 +57,7 @@ CfhighlanderTemplate do
 
   Component template: 'amp-ecs@0.1.0', name: 'ampecs', render: Inline do
     parameter name: 'VPCId', value: FnImportValue(FnSub("${EnvironmentName}-vpc-VPCId"))
-    parameter name: 'SubnetIds', value: FnSplit(',', FnImportValue(FnSub("${EnvironmentName}-vpc-ComputeSubnets")))
+    parameter name: 'SubnetIds', value: FnImportValue(FnSub("${EnvironmentName}-vpc-ComputeSubnets"))
     parameter name: 'EcsCluster', value: FnImportValue(FnSub("${EnvironmentName}-ecs-EcsCluster"))
   end
 
