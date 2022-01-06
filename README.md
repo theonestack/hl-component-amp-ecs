@@ -47,3 +47,20 @@ aot_ecs_observer:
 This will discover any services with myservice in the name and will scrape metrics from the `/mymetrics` path on port `8080`
 
 See [Amazon Elastic Container Service Observer](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/observer/ecsobserver) for full config details
+
+## Usage
+
+Here is an example of using this component to deploy it as a standalone service within an existing VPC and ECS Cluster
+
+```ruby
+CfhighlanderTemplate do
+
+  Component template: 'amp-ecs@0.1.0', name: 'ampecs', render: Inline do
+    parameter name: 'VPCId', value: FnImportValue(FnSub("${EnvironmentName}-vpc-VPCId"))
+    parameter name: 'SubnetIds', value: FnSplit(',', FnImportValue(FnSub("${EnvironmentName}-vpc-ComputeSubnets")))
+    parameter name: 'EcsCluster', value: FnImportValue(FnSub("${EnvironmentName}-ecs-EcsCluster"))
+  end
+
+end
+
+```
