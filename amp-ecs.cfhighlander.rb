@@ -18,9 +18,6 @@ CfhighlanderTemplate do
       parameter name: 'SubnetIds', value: FnSplit(',', Ref(:SubnetIds))
       parameter name: 'EcsCluster', value: Ref(:EcsCluster)
       parameter name: 'DesiredCount', value: 1
-      parameter name: 'Enableexportercaling', value: false
-      parameter name: 'exporterScalingMax', value: 1
-      parameter name: 'exporterScalingMin', value: 1
       parameter name: 'MinimumHealthyPercent', value: 0
       parameter name: 'MaximumPercent', value: 100
       parameter name: 'Cpu', value: Ref('Cpu')
