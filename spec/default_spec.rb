@@ -83,7 +83,7 @@ describe 'should be valid' do
                  "aps:QueryMetrics",
                  "aps:GetLabels",
                  "aps:GetSeries",
-                 "aps:GetMetricMetaata"],
+                 "aps:GetMetricMetadata"],
                "Effect"=>"Allow",
                "Resource"=>[{"Ref"=>"APSWorkspace"}],
                "Sid"=>"ampread"}]},

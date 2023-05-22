@@ -8,7 +8,7 @@ grafana_iam_policies:
       - "aps:QueryMetrics"
       - "aps:GetLabels"
       - "aps:GetSeries"
-      - "aps:GetMetricMetaata"
+      - "aps:GetMetricMetadata"
     resource:
       - Ref: APSWorkspace
 
