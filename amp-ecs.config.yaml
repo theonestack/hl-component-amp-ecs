@@ -18,9 +18,11 @@ aot_ecs_observer:
     - port_label: ECS_PROMETHEUS_EXPORTER_PORT_V2
       metrics_path_label: ECS_PROMETHEUS_EXPORTER_METRICS_PATH
 
-
 default_aot_config_content:
   extensions:
+    sigv4auth:
+      service: "aps"
+      region: "${AWS::Region}"
     ecs_observer:
       refresh_interval: 60s # format is https://golang.org/pkg/time/#ParseDuration
       cluster_name: '${EnvironmentName}-services' # cluster name need manual config
@@ -56,22 +58,20 @@ default_aot_config_content:
     batch: {}
 
   exporters:
-    awsprometheusremotewrite:
+    prometheusremotewrite:
       endpoint: ${APSWorkspace.PrometheusEndpoint}api/v1/remote_write
-      aws_auth:
-        region: ${AWS::Region}
-        service: "aps"
+      auth:
+        authenticator: sigv4auth
     logging:
-      loglevel: debug
+      loglevel: info
 
-      
   service:
-    extensions: [ ecs_observer ]
+    extensions: [ ecs_observer, sigv4auth ]
     pipelines:
       metrics:
         receivers: [prometheus]
         processors: [ batch ]
-        exporters: [awsprometheusremotewrite]
+        exporters: [prometheusremotewrite]
 
 components:
   exporter:
@@ -85,7 +85,7 @@ components:
         otelexport:
           repo: ghcr.io
           image: base2services/aws-ecs-otel-collector
-          tag: v0.15.1
+          tag: v0.41.0
           env_vars:
             ENVIRONMENT_NAME:
               Fn::Sub: ${EnvironmentName}
@@ -93,7 +93,7 @@ components:
               Fn::Sub: ${AWS::Region}
           secrets:
             ssm:
-              AOT_CONFIG_CONTENT: /${EnvironmentName}/amq-ecs/AOT_CONFIG_CONTENT
+              AOT_CONFIG_CONTENT: /${ParameterPrefix}${EnvironmentName}/amp-ecs/AOT_CONFIG_CONTENT
       iam_policies:
         ecsscan:
           action:
