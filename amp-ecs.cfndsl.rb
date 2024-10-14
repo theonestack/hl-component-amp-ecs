@@ -19,7 +19,7 @@ CloudFormation do
     ecs_aot_config['extensions']['ecs_observer'].merge!(aot_ecs_observer)
 
     SSM_Parameter(:AotConfig) do
-      Name FnSub('/${ParameterPrefix}${EnvironmentName}/amp-ecs/AOT_CONFIG_CONTENT')
+      Name FnSub('/${EnvironmentName}/amp-ecs/AOT_CONFIG_CONTENT')
       Type 'String'
       Value FnSub("#{YAML.dump(ecs_aot_config)}")
       Description 'AWS OpenTelemetry ECS Exporter Config'

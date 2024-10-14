@@ -69,9 +69,9 @@ default_aot_config_content:
     extensions: [ ecs_observer, sigv4auth ]
     pipelines:
       metrics:
-        receivers: [prometheus]
+        receivers: [ prometheus ]
         processors: [ batch ]
-        exporters: [prometheusremotewrite]
+        exporters: [ prometheusremotewrite ]
 
 components:
   exporter:
@@ -93,7 +93,7 @@ components:
               Fn::Sub: ${AWS::Region}
           secrets:
             ssm:
-              AOT_CONFIG_CONTENT: /${ParameterPrefix}${EnvironmentName}/amp-ecs/AOT_CONFIG_CONTENT
+              AOT_CONFIG_CONTENT: /${EnvironmentName}/amp-ecs/AOT_CONFIG_CONTENT
       iam_policies:
         ecsscan:
           action:

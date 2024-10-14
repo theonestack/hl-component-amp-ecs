@@ -11,7 +11,6 @@ CfhighlanderTemplate do
       ComponentParam 'Cpu', '512'
       ComponentParam 'Memory', '1024'
       ComponentParam 'GrafanaAccountId', ''
-      ComponentParam 'ParameterPrefix', ''
     end
   
     Component template: 'fargate-v2@0.8.6', name: 'exporter', render: Inline do
@@ -23,7 +22,6 @@ CfhighlanderTemplate do
       parameter name: 'MaximumPercent', value: 100
       parameter name: 'Cpu', value: Ref('Cpu')
       parameter name: 'Memory', value: Ref('Memory')
-      parameter name: 'ParameterPrefix', value: Ref('ParameterPrefix')
     end
   
   end
