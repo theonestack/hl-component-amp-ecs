@@ -13,7 +13,7 @@ CfhighlanderTemplate do
       ComponentParam 'GrafanaAccountId', ''
     end
   
-    Component template: 'fargate-v2@0.7.1', name: 'exporter', render: Inline do
+    Component template: 'fargate-v2@0.8.6', name: 'exporter', render: Inline do
       parameter name: 'VPCId', value: Ref(:VPCId)
       parameter name: 'SubnetIds', value: FnSplit(',', Ref(:SubnetIds))
       parameter name: 'EcsCluster', value: Ref(:EcsCluster)
